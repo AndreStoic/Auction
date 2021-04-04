@@ -1,0 +1,147 @@
+//!
+//! The 'auction' contract entry.
+//! PATH="/mnt/c/Users/andre/Downloads/zinc:$PATH"
+//! Tests: #[should_panic]   #[ignore]
+//! Contract Map is responsible to dtore the successful bids
+//! Bids come from Web3
+
+// /tokenisations_project/my-safe-app$ yarn start
+// /tokenisations_project/baseline/commit-mgr$ npm run dev
+
+use std::collections::MTreeMap;
+
+struct Auction_Parameters {
+    auction_maturity: (u16, u8, u8),
+    loan_amount: i64,
+    loan_max_interest: i64,
+}
+
+struct Bid {
+    amount: i64,
+    interest: i64,
+    timestamp: (u16, u8, u8),
+}
+
+#[test]
+fn placeBidTest() {
+    const auction_maturity: (u16, u8, u8) = (2021, 3, 26);
+    const loan_amount: i64 = 100;
+    const loan_max_interest: i64 = 1000;
+    let mut bid = Bid {
+        amount: 50 as i64,
+        interest: 900 as i64,
+        timestamp: (2021, 3, 25) as (u16, u8, u8),
+    };
+    require(bid.amount <= loan_amount, "loan amount doesn't match");
+    require(bid.interest <= loan_max_interest, "loan amount doesn't match");
+    require(auction_maturity.0 >= bid.timestamp.0, "year values don't match");
+    require(auction_maturity.1 >= bid.timestamp.1, "month values don't match");
+    require(auction_maturity.2 >= bid.timestamp.2, "day values don't match");
+}
+
+// fn sortTest() -> u8 {
+#[test]
+fn sortTest() {
+    let mut x = 7;
+    dbg!("One!");
+    for i in 0..10 while i % x != 2 {
+        x += 7
+    };
+    dbg!("{}", x);
+    x
+}
+
+#[test]
+fn bubble_sort() {
+    let mut arr = [0,1,2,3,4];
+    const len: u8 = 5;
+    for i in 0..len {
+        //const ii: u8 = i;
+        for j in 0..len - 1 {//- ii {
+            if arr[j] > arr[j + 1] {
+                //arr.swap(j, j + 1);
+                dbg!("{}", arr);
+            }
+        }
+    }
+}
+
+// cumsum = [];
+// j = [0,1,2,3,4];
+// for(var a=0;a<j.length;a++) {
+//   if(a==0) cumsum[a] = j[0];
+//   else cumsum[a] = cumsum[a-1] + j[a];
+// }
+// fn cumSumTest() -> [Balance; N] {
+#[test]
+fn cumSumTest() {
+    //let mut array = [0 as Balance; N];
+    let mut j = [0,1,2,3,4];
+    let mut cumsum = 0;
+    let mut amount = 7;
+    let mut last_bid_fraction = 0;
+    for i in 0..5 {
+        cumsum += j[i];
+        if cumsum <= amount {
+            dbg!("{}", cumsum);
+        }
+        else {
+            last_bid_fraction = amount + j[i] - cumsum;
+            dbg!("max reached: {}", last_bid_fraction);
+        }
+    }
+}
+
+contract Auction {
+    owner: u160;
+    bids: MTreeMap<u8, Bid>;
+    bids_count: u64;
+    auction_parameters: Auction_Parameters;
+    
+    pub fn new(owner: u160) -> Self {
+        Self {
+            owner: owner,
+            bids: MTreeMap,
+            bids_count: 0,
+            auction_parameters: Auction_Parameters {
+                auction_maturity: (2021, 3, 26) as (u16, u8, u8),
+                loan_amount: 100 as i64,
+                loan_max_interest: 1000 as i64,
+            },
+        }
+    }
+
+    pub fn placeBid(mut self) {
+        let (value, exists) = self.bids.insert(0, Bid { 
+            amount: 50 as i64, 
+            interest: 900 as i64, 
+            timestamp: (2021, 3, 25) as (u16, u8, u8)});
+        let self.bids_count: u64 += 1;
+        //let (value1, exists1) = self.bids.get(0);
+        //let exists2 = self.bids.contains(1);
+        //let (value3, exists3) = self.bids.remove(0);
+        //require(self.bids.get(0).amount <= self.auction_parameters.loan_amount, "loan amount doesn't match");
+
+    }
+
+    fn countBids(self) {
+        //let mut j = [0 as Balance; N];
+        let mut len = self.bids.length();
+        let mut j = [0,1,2,3,4];
+        let mut cumsum = 0;
+        let mut amount = 7;
+        let mut last_bid_fraction = 0;
+        for i in 0..N {
+            cumsum += j[i];
+            if cumsum <= amount {
+                dbg!("{}", cumsum);
+            }
+            else {
+                last_bid_fraction = amount + j[i] - cumsum;
+                dbg!("max reached: {}", last_bid_fraction);
+            }
+        }
+        
+    }
+
+}

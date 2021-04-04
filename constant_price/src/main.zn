@@ -1,0 +1,13 @@
+//!
+//! The 'constant_price' contract entry.
+//!
+
+contract ConstantPrice {
+    pub value: u64;
+
+    pub fn new(value: u64) -> Self {
+        Self {
+            value: value,
+        }
+    }
+}
