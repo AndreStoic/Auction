@@ -3,22 +3,20 @@
 import { number } from "prop-types";
 
 let date: Date = new Date(); 
-let auction_maturity: Date;
+let auction_maturity: Date = new Date("2021-05-27");
 console.log(date);
-console.log(auction_maturity);
 
-let loan_amount: number;
-let loan_max_interest: number;
+var loan_amount: number = 100;
+var loan_max_interest: number = 0.1;
 
 var bids_amount = new Array();
 var bids_interest = new Array();
-
 
 function initAuction(auction_maturity: Date, loan_amount: number, loan_max_interest: number) {
     auction_maturity = auction_maturity;
     loan_amount = loan_amount;
     loan_max_interest = loan_max_interest;
-    console.log("Loans initialised: Maturity: " + auction_maturity.toString() + "Loan Amount: " + loan_amount.toString() + "Loan max Interest: " + loan_max_interest.toString());
+    console.log("Loans initialised: Maturity: " + auction_maturity.toString() + " | Loan Amount: " + loan_amount.toString() + " | Loan max Interest: " + loan_max_interest.toString());
 }
 
 function checkBid(bid_amount: number, bid_interest: number) {
@@ -36,6 +34,8 @@ function bid(amount: number, interest: number) {
         console.log(checked_bid);
         bids_amount.push(checked_bid[0]);
         bids_interest.push(checked_bid[1]);
+        console.log('successful bid')
+        console.log("Bids: " + bids_amount.toString())
     }
     else {
         console.log('unsuccessful bid')
@@ -64,7 +64,7 @@ function finishAuction(){
         console.log('Successful Auction');
         
         for (let i = 0; i < bids_amount.length; i++) {
-            let bid = [bids_amount[i], bids_interest[i]];
+            let bid = [bids_interest[i], bids_amount[i]];
             bids[i] = bid;
         }
         console.log(bids);
@@ -94,9 +94,12 @@ function finishAuction(){
 
 // @ts-check
 function init() {
-    initAuction(new Date("2021-05-27"), 100, 0.1);
+    initAuction(new Date("2021-05-27"), 110, 0.11);
+    console.log(loan_amount)
+    console.log(loan_max_interest)
     bid(50, 0.05);
     bid(60, 0.04);
     finishAuction();
+    
 }
 init();
