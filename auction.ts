@@ -6,17 +6,15 @@ let date: Date = new Date();
 let auction_maturity: Date = new Date("2021-05-27");
 console.log(date);
 
-var loan_amount: number = 100;
-var loan_max_interest: number = 0.1;
+let loan_amount: number = 100;
+let loan_max_interest: number = 0.1;
 
-var bids_amount = new Array();
-var bids_interest = new Array();
+let bids_amount = new Array();
+let bids_interest = new Array();
 
 function initAuction(auction_maturity: Date, loan_amount: number, loan_max_interest: number) {
-    auction_maturity = auction_maturity;
-    loan_amount = loan_amount;
-    loan_max_interest = loan_max_interest;
     console.log("Loans initialised: Maturity: " + auction_maturity.toString() + " | Loan Amount: " + loan_amount.toString() + " | Loan max Interest: " + loan_max_interest.toString());
+    return [auction_maturity, loan_amount, loan_max_interest];
 }
 
 function checkBid(bid_amount: number, bid_interest: number) {
@@ -54,7 +52,7 @@ function sortFunction(a: number[], b: number[]) {
 
 function finishAuction(){
     let bids = new Array();
-    const cumulativeSum = (sum => value => sum += value)(0);
+    //const cumulativeSum = (sum => value => sum += value)(0);
 
     if (bids_amount.length === 0 || 
         bids_amount.reduce((a, b) => {return a + b;}) < loan_amount) { 
@@ -67,19 +65,21 @@ function finishAuction(){
             let bid = [bids_interest[i], bids_amount[i]];
             bids[i] = bid;
         }
-        console.log(bids);
         let bids_sorted = bids.sort(sortFunction);
         let bids_amount_sorted = new Array();
         let bids_interest_sorted = new Array();
         let full_bids_amount: any;
         console.log(bids_sorted)
-        var pos: number;
-        for (var pos = 0; pos < bids_sorted.length; pos++) {
-            full_bids_amount = bids_sorted.map(cumulativeSum)
+        var pos: number = 0;
+        for (var i = 0; i < bids_sorted.length; i++) {
+            pos = i;
+            console.log(bids_sorted[i][1]);
+            full_bids_amount += parseFloat(bids_sorted[i][1]);
+            console.log(parseFloat(full_bids_amount));
             if (full_bids_amount <= loan_amount) {
                 console.log(bids_sorted)
-                bids_amount_sorted.push(bids_sorted[pos][0]);
-                bids_interest_sorted.push(bids_sorted[pos][1]);
+                bids_amount_sorted.push(bids_sorted[i][0]);
+                bids_interest_sorted.push(bids_sorted[i][1]);
             }
             else {
                 break;
@@ -99,6 +99,7 @@ function init() {
     console.log(loan_max_interest)
     bid(50, 0.05);
     bid(60, 0.04);
+    bid(10, 0.03);
     finishAuction();
     
 }
