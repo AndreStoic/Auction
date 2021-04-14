@@ -3,18 +3,21 @@
 import { number } from "prop-types";
 
 let date: Date = new Date(); 
-let auction_maturity: Date = new Date("2021-05-27");
+let auction_maturity: Date;
 console.log(date);
 
-let loan_amount: number = 100;
-let loan_max_interest: number = 0.1;
+let loan_amount: number;
+let loan_max_interest: number;
 
 let bids_amount = new Array();
 let bids_interest = new Array();
 
-function initAuction(auction_maturity: Date, loan_amount: number, loan_max_interest: number) {
-    console.log("Loans initialised: Maturity: " + auction_maturity.toString() + " | Loan Amount: " + loan_amount.toString() + " | Loan max Interest: " + loan_max_interest.toString());
-    return [auction_maturity, loan_amount, loan_max_interest];
+function initAuction(auction_maturity_p: Date, loan_amount_p: number, loan_max_interest_p: number) {
+    loan_amount = loan_amount_p;
+    loan_max_interest = loan_max_interest_p;
+    auction_maturity = auction_maturity_p;
+    console.log("Loans initialised: Maturity: " + auction_maturity.toString() + " | Loan Amount: " + 
+                loan_amount.toString() + " | Loan max Interest: " + loan_max_interest.toString());
 }
 
 function checkBid(bid_amount: number, bid_interest: number) {
@@ -50,10 +53,9 @@ function sortFunction(a: number[], b: number[]) {
     }
 }
 
+// to add: make sure that sort works for same interest but different times (second precision)
 function finishAuction(){
     let bids = new Array();
-    //const cumulativeSum = (sum => value => sum += value)(0);
-
     if (bids_amount.length === 0 || 
         bids_amount.reduce((a, b) => {return a + b;}) < loan_amount) { 
         console.log("Unsuccessful Auction");
@@ -68,39 +70,40 @@ function finishAuction(){
         let bids_sorted = bids.sort(sortFunction);
         let bids_amount_sorted = new Array();
         let bids_interest_sorted = new Array();
-        let full_bids_amount: any;
+        let full_bids_amount: number = 0;
         console.log(bids_sorted)
         var pos: number = 0;
         for (var i = 0; i < bids_sorted.length; i++) {
             pos = i;
-            console.log(bids_sorted[i][1]);
-            full_bids_amount += parseFloat(bids_sorted[i][1]);
-            console.log(parseFloat(full_bids_amount));
-            if (full_bids_amount <= loan_amount) {
-                console.log(bids_sorted)
-                bids_amount_sorted.push(bids_sorted[i][0]);
-                bids_interest_sorted.push(bids_sorted[i][1]);
+            let pos_bid: number = +bids_sorted[i][1];
+            bids_amount_sorted.push(pos_bid);
+            bids_interest_sorted.push(+bids_sorted[i][0]);
+            if (full_bids_amount + pos_bid <= loan_amount) {
+                full_bids_amount += +bids_sorted[i][1]; //cast string to float
             }
             else {
                 break;
             }
         }
-        let amount_partial_bid: number = bids_amount_sorted[pos+1] + full_bids_amount - loan_amount;
-        let interest_partial_bid: number = bids_interest_sorted[pos+1];
-        bids_amount_sorted.push(amount_partial_bid[pos+1][0]);
-        bids_interest_sorted.push(interest_partial_bid[pos+1][1]);
+        let amount_partial_bid: number = loan_amount - full_bids_amount;
+        let interest_partial_bid: number = bids_interest_sorted[pos];
+        bids_amount_sorted.splice(-1,1);
+        bids_interest_sorted.splice(-1,1);
+        bids_amount_sorted.push(amount_partial_bid);
+        bids_interest_sorted.push(interest_partial_bid);
+        console.log(bids_amount_sorted);
+        console.log(bids_interest_sorted);
     }
 }
 
 // @ts-check
 function init() {
-    initAuction(new Date("2021-05-27"), 110, 0.11);
+    initAuction(new Date("2021-05-27"), 100, 0.1);
     console.log(loan_amount)
     console.log(loan_max_interest)
-    bid(50, 0.05);
+    bid(50, 0.03);
     bid(60, 0.04);
     bid(10, 0.03);
     finishAuction();
-    
 }
 init();
